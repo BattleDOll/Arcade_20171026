@@ -5,6 +5,7 @@
 cGameNode::cGameNode()
 {
 	m_pImgBackBuffer = g_pImageManager->AddImage("BackBuffer", 2048, WINSIZEY);
+	m_pImgMiniBuffer = g_pImageManager->AddImage("MiniBuffer", WINSIZEX, 128);
 
 	g_pKeyManager->Setup();
 }
@@ -53,6 +54,7 @@ LRESULT cGameNode::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		hdc = BeginPaint(hWnd, &ps);
 		this->Render();
 		m_pImgBackBuffer->Render(hdc);
+		m_pImgMiniBuffer->Render(hdc);
 		EndPaint(hWnd, &ps);
 	break;
 	case WM_MOUSEMOVE:

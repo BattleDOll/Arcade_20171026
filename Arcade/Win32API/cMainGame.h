@@ -10,6 +10,8 @@ private:
 	bool			m_isPlaying;
 
 	cImage*			m_pImgBackground;		// 화면 전체 배경
+	cImage*			m_pImgMiniBuffer;
+	cImage*			m_pImgGround;
 	cImage*			m_pImgMiniMap;			// 미니맵용 이미지 버퍼
 
 	cMap*			m_pMap;

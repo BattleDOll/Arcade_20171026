@@ -34,7 +34,25 @@ void cPlayer::Update()
 
 	// 플레이어 이동 값
 	m_fPosX = m_pPlayer->GetPosX();
-	m_fPosY = m_pPlayer->GetPosY();	
+	m_fPosY = m_pPlayer->GetPosY();
+
+	// 물에 떨어졌을 때 처리
+	if (m_pPlayer->GetPosY() >= 545)
+	{
+		m_pPlayer->SetPosY(m_fPosY - m_fJumpPower + m_fGravity);
+		m_fGravity += GRAVITY;
+
+		m_isJumpping = true;
+
+		// 점프 후 내려오는 중에 착지 설정
+		if (m_fGravity > m_fJumpPower)
+		{
+			probeY = m_pPlayer->GetPosY() + m_pPlayer->GetFrameHeight() / 2 + m_fGravity;
+
+			if (g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX, probeY - 10) == false)
+				SetLanding();
+		}
+	}
 }
 
 void cPlayer::MiniRender()
@@ -42,15 +60,10 @@ void cPlayer::MiniRender()
 	HPEN hPen = (HPEN)CreatePen(0, 10, RGB(255, 0, 0));
 	HPEN hSelectPen = (HPEN)SelectObject(g_hDC, hPen);
 
-	BoudingLineMake(g_hDC,
-		m_pPlayer->GetPosX() + m_pPlayer->GetFrameWidth() / 2 - WINSIZEX / 3,
-		m_pPlayer->GetPosY() - WINSIZEY + ( WINSIZEY - m_pPlayer->GetPosY()),
-		1024, 640);
-
 	EllipseMakeCenter(g_hDC,
 		m_pPlayer->GetPosX(),
 		m_pPlayer->GetPosY(),
-		25, 25);
+		50, 50);
 
 	DeleteObject(hSelectPen);
 	DeleteObject(hPen);
@@ -58,35 +71,51 @@ void cPlayer::MiniRender()
 
 void cPlayer::Render()
 {
-	if (m_isIdle && !m_isJumpping)//아이들 렌더		
+	if (m_isIdle && !m_isJumpping)//아이들		
 	{
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
-			0, 0);
+			8, 5);
 	}
-	else if (m_isRun && !m_isJumpping)// 런 랜더
+	else if (m_isRun && m_isRightMove && !m_isJumpping)// 오른쪽 이동
 	{
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
 			1, 0, 8, 0, 3);
 	}
+	else if (m_isRun && m_isLeftMove && !m_isJumpping)// 왼쪽 이동
+	{
+		if (m_pPlayer->GetFrameY() < 6)
+		{
+			m_pPlayer->SetFrameY(7);
+		}
+		m_pPlayer->FrameRender(g_hDC,
+			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
+			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
+			0, 7, 7, 7, 3);
+	}
 
-	if (m_isJumpping && m_fGravity < m_fJumpPower)// 점프 랜더
+	if (m_isJumpping && m_fGravity < m_fJumpPower)// 점프
 	{
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
-			2, 8);
+			1, 8);
 	}
-	else if (m_isJumpping && m_fGravity > m_fJumpPower)// 렌딩 랜더
+	else if (m_isJumpping && m_fGravity > m_fJumpPower)// 착지
 	{
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
 			6, 9);
 	}
+
+	string str("캐릭터 Y 좌표 : ");
+	char szStr[128];
+	str += itoa(m_fPosY, szStr, 10);
+	TextOutA(g_hDC, 40, 575, str.c_str(), str.length());
 }
 
 void cPlayer::PlayerCollision()
@@ -96,15 +125,15 @@ void cPlayer::PlayerCollision()
 	probeX2 = m_pPlayer->GetPosX() + m_pPlayer->GetFrameWidth() / 2;		//right
 
 	probeY = m_pPlayer->GetPosY() + m_pPlayer->GetFrameHeight() / 2 - 10;	//bottom
-	probeY1 = m_pPlayer->GetPosY();											//center
-	probeY2 = m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2;	//top
+	probeY1 = m_pPlayer->GetPosY() - 10;											//center
+	probeY2 = m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2 + 10;	//top
 
 
 	if (g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY))
 	{
 		m_pPlayer->SetPosY(m_pPlayer->GetPosY() + 5);
 	}
-	else if (!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY1) && g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY2))
+	else if (!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY - 5) /*&& g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY2)*/)
 	{
 		m_pPlayer->SetPosY(m_pPlayer->GetPosY() - 5);
 	}
@@ -113,7 +142,7 @@ void cPlayer::PlayerCollision()
 void cPlayer::PlayerControl()
 {
 
-	if (g_pKeyManager->isStayKeyDown('A')  /* &&g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX, probeY1)*/)
+	if (g_pKeyManager->isStayKeyDown('A'))
 	{
 		m_isIdle = false;
 		m_isRun = true;
@@ -134,7 +163,7 @@ void cPlayer::PlayerControl()
 		}
 	}
 
-	else if (g_pKeyManager->isStayKeyDown('D') /* && g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX2, probeY1)*/)
+	else if (g_pKeyManager->isStayKeyDown('D'))
 	{
 		m_isIdle = false;
 		m_isRun = true;

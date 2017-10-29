@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "cMainGame.h"
+
 #include "cMap.h"
 #include "cPlayer.h"
 
@@ -8,6 +9,8 @@ cMainGame::cMainGame()
 	: m_isPlaying(false)
 {
 	LoadImageFromFile();
+
+	m_pImgMiniBuffer = g_pImageManager->FindImage("MiniBuffer");
 
 	m_pMap = new cMap;
 	m_pPlayer = new cPlayer;
@@ -23,7 +26,7 @@ void cMainGame::Setup()
 {
 	m_pMap->Setup();
 	m_pPlayer->Setup();
-	m_pPlayer->SetMap(m_pMap);
+	m_pPlayer->SetMap(m_pMap); // 맵 참조
 }
 
 void cMainGame::Update()
@@ -64,14 +67,15 @@ void cMainGame::Render()
 void cMainGame::LoadImageFromFile()
 {
 	/* 전체 배경 */
-	m_pImgBackground = g_pImageManager->AddImage("BackGround", "images/map.bmp", 2048, WINSIZEY);
+	m_pImgBackground = g_pImageManager->AddImage("BackGround", "images/background.bmp", 2048, WINSIZEY);
 
 	/* 맵 */
-	g_pImageManager->AddImage("Map", "images/map_magenta.bmp", 2048, WINSIZEY);
+	m_pImgGround = g_pImageManager->AddImage("Map", "images/foreground_magenta.bmp", 2048, WINSIZEY);
 	g_pImageManager->AddImage("MapBuffer", 2048, WINSIZEY)->SetTransColor(true, RGB(255, 0, 255));
 
 	/* 미니맵 */
-	m_pImgMiniMap = g_pImageManager->AddImage("MiniMap", WINSIZEX, 100);
+	m_pImgMiniMap = g_pImageManager->AddImage("MiniMap", WINSIZEX, 128);
+	g_pImageManager->AddImage("MiniBuffer", WINSIZEX, 128)/*->SetTransColor(true, RGB(255, 0, 255))*/;
 
 	/* 프로그레스바 */
 	g_pImageManager->AddImage("ProgressBack", "images/progressBarBack.bmp", 50, 10);
@@ -88,8 +92,18 @@ void cMainGame::LoadImageFromFile()
 
 void cMainGame::MiniMapRender()
 {
-	m_pPlayer->MiniRender();
 
-	m_pImgBackground->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 100);
-	m_pImgMiniMap->Render(m_pImgBackground->GetMemDC(), 0, 0);
+//	m_pImgBackground->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
+//	m_pImgMiniBuffer->Render(m_pImgBackBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
+	m_pImgGround->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
+
+
+	m_pImgMiniMap->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);	m_pPlayer->MiniRender();
 }
+
+//void cMainGame::MiniMapRender()
+//{
+//	m_pPlayer->MiniRender();
+//	m_pImgBackground->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
+//	m_pImgMiniMap->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
+//}

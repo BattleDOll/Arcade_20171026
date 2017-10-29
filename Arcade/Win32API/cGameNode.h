@@ -5,6 +5,7 @@ class cGameNode
 {
 protected:
 	cImage*		m_pImgBackBuffer;
+	cImage*		m_pImgMiniBuffer;
 
 public:
 	cGameNode();
