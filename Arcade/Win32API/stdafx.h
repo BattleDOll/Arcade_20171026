@@ -31,11 +31,11 @@ using namespace std;
 #define WINSTARTX		0
 #define WINSTARTY		0
 #define WINSIZEX		1024
-#define WINSIZEY		624
+#define WINSIZEY		640
 #define WINSTYLE		WS_CAPTION | WS_SYSMENU
 #define PURE			= 0
 #define PI				3.141592654f
-#define GRAVITY			0.3f
+#define GRAVITY			0.75f
 
 #include "MacroUtility.h"
 

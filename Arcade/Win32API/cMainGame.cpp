@@ -23,6 +23,7 @@ void cMainGame::Setup()
 {
 	m_pMap->Setup();
 	m_pPlayer->Setup();
+	m_pPlayer->SetMap(m_pMap);
 }
 
 void cMainGame::Update()
@@ -63,14 +64,14 @@ void cMainGame::Render()
 void cMainGame::LoadImageFromFile()
 {
 	/* 전체 배경 */
-	m_pImgBackground = g_pImageManager->AddImage("BackGround", "images/map.bmp", 6144, 624);
+	m_pImgBackground = g_pImageManager->AddImage("BackGround", "images/map.bmp", 2048, WINSIZEY);
 
 	/* 맵 */
-	g_pImageManager->AddImage("Map", "images/map_magenta.bmp", 6144, 624);
-	g_pImageManager->AddImage("MapBuffer", 6144, 624)->SetTransColor(true, RGB(255, 0, 255));
+	g_pImageManager->AddImage("Map", "images/map_magenta.bmp", 2048, WINSIZEY);
+	g_pImageManager->AddImage("MapBuffer", 2048, WINSIZEY)->SetTransColor(true, RGB(255, 0, 255));
 
 	/* 미니맵 */
-	m_pImgMiniMap = g_pImageManager->AddImage("MiniMap", 1024, 104);
+	m_pImgMiniMap = g_pImageManager->AddImage("MiniMap", WINSIZEX, 100);
 
 	/* 프로그레스바 */
 	g_pImageManager->AddImage("ProgressBack", "images/progressBarBack.bmp", 50, 10);
@@ -80,7 +81,7 @@ void cMainGame::LoadImageFromFile()
 	g_pImageManager->AddImage("Object", "images/angrybirds-name-03.bmp", 894, 894, true, RGB(255, 255, 255));
 
 	/* 플레이어 */
-	g_pImageManager->AddImage("Player", "images/ch.bmp", 960, 960, 12, 12, WINSIZEX / 3, MAP1_Y, true, RGB(255, 0, 255));
+	g_pImageManager->AddImage("Player", "images/ch.bmp", 960, 960, 12, 12, 150, WINSIZEY / 2, true, RGB(255, 0, 255));
 
 	/* 몬스터 */
 }
@@ -89,6 +90,6 @@ void cMainGame::MiniMapRender()
 {
 	m_pPlayer->MiniRender();
 
-	m_pImgBackBuffer->Render(m_pImgMiniMap->GetMemDC(), 0, 0, 1024, 104);
-	m_pImgMiniMap->Render(m_pImgBackground->GetMemDC(),0, 0);
+	m_pImgBackground->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 100);
+	m_pImgMiniMap->Render(m_pImgBackground->GetMemDC(), 0, 0);
 }

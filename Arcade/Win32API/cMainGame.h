@@ -23,6 +23,7 @@ public:
 	~cMainGame();
 
 	void Setup();
+
 	virtual void Update() override;
-	virtual void Render() override;
+	virtual void Render() override;  
 };

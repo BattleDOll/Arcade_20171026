@@ -4,7 +4,7 @@
 
 cGameNode::cGameNode()
 {
-	m_pImgBackBuffer = g_pImageManager->AddImage("BackBuffer", 6144, 624);
+	m_pImgBackBuffer = g_pImageManager->AddImage("BackBuffer", 2048, WINSIZEY);
 
 	g_pKeyManager->Setup();
 }
@@ -64,6 +64,7 @@ LRESULT cGameNode::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		PostQuitMessage(0);
 		break;
 	}
+
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

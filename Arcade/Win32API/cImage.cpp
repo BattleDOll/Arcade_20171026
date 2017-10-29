@@ -107,6 +107,7 @@ void cImage::Setup(const char * fileName, int width, int height, int frameX, int
 	m_pImageInfo->nHeight = height;
 	m_pImageInfo->nMaxFrameX = frameX - 1;
 	m_pImageInfo->nMaxFrameY = frameY - 1;
+
 	m_pImageInfo->nFrameWidth = width / frameX;
 	m_pImageInfo->nFrameHeight = height / frameY;
 

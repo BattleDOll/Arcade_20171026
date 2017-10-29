@@ -1,38 +1,36 @@
 #pragma once
 
-class cProgressBar;
-class CMap;
-
-#define MAP1_Y (WINSIZEY - 110)
+class cMap;
 
 class cPlayer
 {
 private:
-	cImage*			m_pPlayer;		// 플레이어 이미지 파일
-	float			m_fPosX;
-	float			m_fPosY;
-	float			probeX;
-	float			probeY;
+	cMap*	m_pMap;			// 맵 참조
 
-	float			m_fJumpPower;		// 점프 파워
-	float			m_fGravity;			// 중력 (점프시 사용)
+	cImage*	m_pPlayer;		// 플레이어 이미지 파일
+	cImage*	m_pImgMapBuffer;	// 배경 정보 이미지 ( 충돌관련 )
 
-	bool			m_isJumpping;		// 점프 중이냐?
-	bool			m_isMoveLeft;
-	bool			m_isMoveRight;
+	float	m_fPosX;
+	float	m_fPosY;
+	float	probeX;
+	float	probeX1;
+	float	probeX2;
+	float	probeY;
+	float	probeY1;
+	float	probeY2;
 
-	int				m_nMapYPos;			// 플레이어의 바닥위 설정 (맵에 따라 다르게 설정이 필요)
-	int				m_nDamageDelay;		// 연속 데미지 방지용 딜레이(무적 모드)
+	float	m_nMoveSpeed;
+	float	m_fJumpPower;		// 점프 파워
+	float	m_fGravity;			// 중력 (점프시 사용)
 
-	cProgressBar*	m_pHpBar;
-	float			m_fMaxHp;
-	float			m_fCurrHp;
-	float			m_nMoveSpeed;
+	bool	m_isJumpping;		// 점프 중이냐?
+	bool	m_isDobleJumpping;	// 이중 점프 가능??
+	bool	m_isIdle;
+	bool	m_isRun;
+	bool	m_isLeftMove;		// 이동 방향 체크
+	bool	m_isRightMove;		// 이동 방향 체크
+	
 
-	cImage*			m_pImgMapBuffer;	// 배경 정보 이미지
-	cImage*			m_pImgGround;
-
-	float			m_nSourX;
 public:
 	cPlayer();
 	~cPlayer();
@@ -40,19 +38,15 @@ public:
 	void Setup();
 	void Update();
 	void MiniRender();
-	void Render();
+	void Render(); 
 
-	void SetLanding();
+	void PlayerCollision();
 	void PlayerControl();
+	void Jump();
+	void SetLanding();
 
 	RECT GetBoundingBox() { return m_pPlayer->GetBoundingBox(); }
-	float GetPosX() { return m_pPlayer->GetPosX(); }
-	float GetPosY() { return m_pPlayer->GetPosY(); }
-	float GetMoveSpeed() { return m_nMoveSpeed; }
 
-	bool GetMoveLeft() { return m_isMoveLeft; }
-
-	int GetDamageDelay() { return m_nDamageDelay; }
-	void SetDamageDelay(int delay) { m_nDamageDelay = delay; }
+	void SetMap(cMap * map) { m_pMap = map; }
 };
 
