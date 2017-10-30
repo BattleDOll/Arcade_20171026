@@ -15,13 +15,16 @@ cPlayer::~cPlayer()
 
 void cPlayer::Setup()
 {
-	m_fJumpPower = 12.5f;
-	m_nMoveSpeed = 5.0f;
+	m_fJumpPower = 15.0f;
+	m_fMoveSpeed = 5.0f;
+	m_fObjSpeed = 0.0f;
 
 	m_isIdle = true;
 	m_isRun = false;
 	m_isLeftMove = false;
 	m_isRightMove = false;
+
+	m_fObjSpeed = 1;
 
 	SetLanding();
 }
@@ -31,26 +34,24 @@ void cPlayer::Update()
 	PlayerCollision();
 	PlayerControl();
 	Jump();
+	Diving();
+
+	rtBody = RectMakeCenter(m_pPlayer->GetPosX(), m_pPlayer->GetPosY(), m_pPlayer->GetFrameWidth(), m_pPlayer->GetFrameHeight());
 
 	// 플레이어 이동 값
 	m_fPosX = m_pPlayer->GetPosX();
 	m_fPosY = m_pPlayer->GetPosY();
 
-	// 물에 떨어졌을 때 처리
-	if (m_pPlayer->GetPosY() >= 545)
+	RECT rt;
+	if (IntersectRect(&rt, &m_pMap->GetRTObject(), &rtBody))
 	{
-		m_pPlayer->SetPosY(m_fPosY - m_fJumpPower + m_fGravity);
-		m_fGravity += GRAVITY;
-
-		m_isJumpping = true;
-
-		// 점프 후 내려오는 중에 착지 설정
-		if (m_fGravity > m_fJumpPower)
+		if (m_pMap->GetObjMoveRight())
 		{
-			probeY = m_pPlayer->GetPosY() + m_pPlayer->GetFrameHeight() / 2 + m_fGravity;
-
-			if (g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX, probeY - 10) == false)
-				SetLanding();
+			m_pPlayer->SetPosX(m_pPlayer->GetPosX() + m_pMap->GetObjSpeed());
+		}
+		if (!m_pMap->GetObjMoveRight())
+		{
+			m_pPlayer->SetPosX(m_pPlayer->GetPosX() - m_pMap->GetObjSpeed());
 		}
 	}
 }
@@ -68,16 +69,27 @@ void cPlayer::MiniRender()
 	DeleteObject(hSelectPen);
 	DeleteObject(hPen);
 
-	string str("캐릭터 Y 좌표 : ");
+
+	string str("캐릭터 X 좌표 : ");
 	char szStr[128];
-	str += itoa(m_fPosY, szStr, 10);
+	str += itoa(m_fPosX, szStr, 10);
 	TextOutA(g_hDC, 40, 575, str.c_str(), str.length());
 }
 
 void cPlayer::Render()
 {
+	RectangleMake(g_hDC, rtBody.left, rtBody.top, m_pPlayer->GetFrameWidth(), m_pPlayer->GetFrameHeight());
+
 	if (m_isIdle && !m_isJumpping)//아이들		
 	{
+		if (m_pPlayer->GetFrameX() < 8 || m_pPlayer->GetFrameX() > 8)
+		{
+			m_pPlayer->SetFrameY(8);
+		}
+		if (m_pPlayer->GetFrameY() < 5 || m_pPlayer->GetFrameY() > 5)
+		{
+			m_pPlayer->SetFrameY(5);
+		}
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
@@ -85,6 +97,14 @@ void cPlayer::Render()
 	}
 	else if (m_isRun && m_isRightMove && !m_isJumpping)// 오른쪽 이동
 	{
+		if (m_pPlayer->GetFrameX() > 1)
+		{
+			m_pPlayer->SetFrameY(1);
+		}
+		if (m_pPlayer->GetFrameY() > 0)
+		{
+			m_pPlayer->SetFrameY(0);
+		}
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
@@ -92,7 +112,11 @@ void cPlayer::Render()
 	}
 	else if (m_isRun && m_isLeftMove && !m_isJumpping)// 왼쪽 이동
 	{
-		if (m_pPlayer->GetFrameY() < 6)
+		if (m_pPlayer->GetFrameX() > 0)
+		{
+			m_pPlayer->SetFrameY(0);
+		}
+		if (m_pPlayer->GetFrameY() < 7 || m_pPlayer->GetFrameY() > 7)
 		{
 			m_pPlayer->SetFrameY(7);
 		}
@@ -104,6 +128,14 @@ void cPlayer::Render()
 
 	if (m_isJumpping && m_fGravity < m_fJumpPower)// 점프
 	{
+		if (m_pPlayer->GetFrameX() > 1)
+		{
+			m_pPlayer->SetFrameY(1);
+		}
+		if (m_pPlayer->GetFrameY() < 8 || m_pPlayer->GetFrameY() > 8)
+		{
+			m_pPlayer->SetFrameY(8);
+		}
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
@@ -111,30 +143,37 @@ void cPlayer::Render()
 	}
 	else if (m_isJumpping && m_fGravity > m_fJumpPower)// 착지
 	{
+		if (m_pPlayer->GetFrameX() < 6 || m_pPlayer->GetFrameX() > 6)
+		{
+			m_pPlayer->SetFrameY(6);
+		}
+		if (m_pPlayer->GetFrameY() < 9 || m_pPlayer->GetFrameY() > 9)
+		{
+			m_pPlayer->SetFrameY(9);
+		}
 		m_pPlayer->FrameRender(g_hDC,
 			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
 			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
 			6, 9);
 	}
-
 }
 
 void cPlayer::PlayerCollision()
 {
-	probeX = m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2;			//left
-	probeX1 = m_pPlayer->GetPosX();											//center
-	probeX2 = m_pPlayer->GetPosX() + m_pPlayer->GetFrameWidth() / 2;		//right
+	probeX1 = m_pPlayer->GetPosX() - 10;	//left
+	probeX2 = m_pPlayer->GetPosX() + 10;	//right
 
-	probeY = m_pPlayer->GetPosY() + m_pPlayer->GetFrameHeight() / 2 - 10;	//bottom
-	probeY1 = m_pPlayer->GetPosY() - 10;											//center
+	probeY1 = m_pPlayer->GetPosY() + m_pPlayer->GetFrameHeight() / 2 - 10;	//bottom
 	probeY2 = m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2 + 10;	//top
 
-
-	if (g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY))
+	if (g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY1) && 
+		g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX2, probeY1))
 	{
-		m_pPlayer->SetPosY(m_pPlayer->GetPosY() + 5);
+		// 기본 지형 충돌
+		m_pPlayer->SetPosY(m_pPlayer->GetPosY() + 10);	
 	}
-	else if (!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY - 5) /*&& g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY2)*/)
+	else if (!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY1 - 5) &&
+			 !g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX2, probeY1 - 5))
 	{
 		m_pPlayer->SetPosY(m_pPlayer->GetPosY() - 5);
 	}
@@ -142,25 +181,24 @@ void cPlayer::PlayerCollision()
 
 void cPlayer::PlayerControl()
 {
-
 	if (g_pKeyManager->isStayKeyDown('A'))
 	{
 		m_isIdle = false;
 		m_isRun = true;
 		m_isLeftMove = true;
 
-		m_pPlayer->SetPosX(m_fPosX - m_nMoveSpeed);
+		m_pPlayer->SetPosX(m_fPosX - m_fMoveSpeed);
 
 		if (m_pPlayer->GetPosX() < 150 ) 
 		{
 			m_pPlayer->SetPosX(m_fPosX - 0);
-			m_pMap->SetPosX(m_pMap->GetPosX() + m_nMoveSpeed); 
+			m_pMap->SetMapPosX(m_pMap->GetMapPosX() + m_fMoveSpeed); 
 		}
 
-		if (m_pMap->GetPosX() > 0)			//맵 이동처리 용
+		if (m_pMap->GetMapPosX() > 0)			//맵 이동처리 용
 		{
-			m_pMap->SetPosX(0);
-			m_pMap->SetPosX(m_pMap->GetPosX() + 0);
+			m_pMap->SetMapPosX(0);
+			m_pMap->SetMapPosX(m_pMap->GetMapPosX() + 0);
 		}
 	}
 
@@ -170,21 +208,21 @@ void cPlayer::PlayerControl()
 		m_isRun = true;
 		m_isRightMove = true;
 
-		m_pPlayer->SetPosX(m_fPosX + m_nMoveSpeed);
+		m_pPlayer->SetPosX(m_fPosX + m_fMoveSpeed);
 
 		//맵 이동처리 용
 		if (m_pPlayer->GetPosX() > WINSIZEX / 3) // 캐릭터 이동시 화면 일정부분에서 고정
 		{
 			m_pPlayer->SetPosX(m_fPosX - 0);
 
-			m_pMap->SetPosX(m_pMap->GetPosX() - m_nMoveSpeed);
+			m_pMap->SetMapPosX(m_pMap->GetMapPosX() - m_fMoveSpeed);
 		}
-		if (m_pMap->GetPosX() < -1024) // 맵 끝에서 스크롤 멈추기
+		if (m_pMap->GetMapPosX() < -1024) // 맵 끝에서 스크롤 멈추기
 		{
-			m_pPlayer->SetPosX(m_fPosX + m_nMoveSpeed);
+			m_pPlayer->SetPosX(m_fPosX + m_fMoveSpeed);
 
-			m_pMap->SetPosX(-1024);
-			m_pMap->SetPosX(m_pMap->GetPosX() + 0);
+			m_pMap->SetMapPosX(-1024);
+			m_pMap->SetMapPosX(m_pMap->GetMapPosX() + 0);
 		}
 		if (m_pPlayer->GetPosX() > 924) // 맵 끝자락에서 캐릭터 멈추기
 		{
@@ -224,8 +262,11 @@ void cPlayer::Jump()
 		{
 			probeY = m_pPlayer->GetPosY() + m_pPlayer->GetFrameHeight() / 2 + m_fGravity;
 
-			if (g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX, probeY - 10) == false)
+			if (!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY + 5) &&
+				!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX2, probeY + 5))
+			{
 				SetLanding();
+			}
 		}
 	}
 }
@@ -235,5 +276,27 @@ void cPlayer::SetLanding()
 	m_fGravity = 0.0f;
 	m_isJumpping = false;
 	m_isDobleJumpping = false;
+}
+
+void cPlayer::Diving()
+{
+	// 물에 떨어졌을 때 처리
+	if (m_pPlayer->GetPosY() >= 550)
+	{
+		m_pPlayer->SetPosY(m_fPosY - (m_fJumpPower + 30) + m_fGravity);
+		m_fGravity += GRAVITY;
+
+		m_isJumpping = true;
+
+		// 점프 후 내려오는 중에 착지 설정
+		if (m_fGravity > m_fJumpPower)
+		{
+			probeY1 = m_pPlayer->GetPosY() + m_pPlayer->GetFrameHeight() / 2 + m_fGravity;
+
+			if (!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY1 + 5) &&
+				!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX2, probeY1 + 5))
+				SetLanding();
+		}
+	}
 }
 

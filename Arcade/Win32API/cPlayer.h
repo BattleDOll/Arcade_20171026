@@ -10,16 +10,19 @@ private:
 	cImage*	m_pPlayer;		// 플레이어 이미지 파일
 	cImage*	m_pImgMapBuffer;	// 배경 정보 이미지 ( 충돌관련 )
 
+	RECT	rtBody;
+
 	float	m_fPosX;
 	float	m_fPosY;
-	float	probeX;
+//	float	probeX;
 	float	probeX1;
 	float	probeX2;
 	float	probeY;
 	float	probeY1;
 	float	probeY2;
 
-	float	m_nMoveSpeed;
+	float	m_fMoveSpeed;
+	float	m_fObjSpeed;
 	float	m_fJumpPower;		// 점프 파워
 	float	m_fGravity;			// 중력 (점프시 사용)
 
@@ -28,8 +31,7 @@ private:
 	bool	m_isIdle;
 	bool	m_isRun;
 	bool	m_isLeftMove;		// 이동 방향 체크
-	bool	m_isRightMove;		// 이동 방향 체크
-	
+	bool	m_isRightMove;		// 이동 방향 체크	
 
 public:
 	cPlayer();
@@ -44,6 +46,7 @@ public:
 	void PlayerControl();
 	void Jump();
 	void SetLanding();
+	void Diving();
 
 	RECT GetBoundingBox() { return m_pPlayer->GetBoundingBox(); }
 

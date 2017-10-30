@@ -35,7 +35,7 @@ using namespace std;
 #define WINSTYLE		WS_CAPTION | WS_SYSMENU
 #define PURE			= 0
 #define PI				3.141592654f
-#define GRAVITY			0.75f
+#define GRAVITY			1.0f
 
 #include "MacroUtility.h"
 

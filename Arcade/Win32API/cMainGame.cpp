@@ -82,7 +82,7 @@ void cMainGame::LoadImageFromFile()
 	g_pImageManager->AddImage("ProgressFront", "images/progressBarFront.bmp", 50, 10);
 
 	/* 지형물 오브젝트*/
-	g_pImageManager->AddImage("Object", "images/angrybirds-name-03.bmp", 894, 894, true, RGB(255, 255, 255));
+	g_pImageManager->AddImage("Object", "images/angrybirds-name-03.bmp", 74, 32, true, RGB(255, 255, 255));
 
 	/* 플레이어 */
 	g_pImageManager->AddImage("Player", "images/ch.bmp", 960, 960, 12, 12, 150, WINSIZEY / 2, true, RGB(255, 0, 255));
