@@ -7,15 +7,15 @@ class cPlayer;
 class cMainGame : public cGameNode
 {
 private:
-	bool			m_isPlaying;
-
-	cImage*			m_pImgBackground;		// 화면 전체 배경
-	cImage*			m_pImgMiniBuffer;
-	cImage*			m_pImgGround;
-	cImage*			m_pImgMiniMap;			// 미니맵용 이미지 버퍼
-
 	cMap*			m_pMap;
 	cPlayer*		m_pPlayer;
+
+	cImage*			m_pImgGround;			// 맵 이미지
+	cImage*			m_pImgBackground;		// 화면 전체 배경
+	cImage*			m_pImgMiniMap;			// 미니맵용 이미지 버퍼 1
+	cImage*			m_pImgMiniBuffer;		// 미니맵용 이미지 버퍼 2
+
+	bool			m_isPlaying;
 
 	void LoadImageFromFile();
 	void MiniMapRender();

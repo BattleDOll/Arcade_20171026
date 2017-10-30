@@ -93,13 +93,12 @@ void cMainGame::LoadImageFromFile()
 void cMainGame::MiniMapRender()
 {
 	m_pPlayer->MiniRender();
-	m_pImgBackground->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
-	m_pImgMiniBuffer->Render(g_hDC, 0, 0);
 
-//	m_pImgMiniBuffer->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
-//	m_pImgMiniBuffer->Render(m_pImgBackBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
-//	m_pImgGround->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
-//	m_pImgMiniMap->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
+	m_pImgBackground->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
+	m_pImgGround->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
+	m_pImgMiniBuffer->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
+
+	m_pImgMiniMap->Render(g_hDC, 0, 0);
 }
 
 //void cMainGame::MiniMapRender()

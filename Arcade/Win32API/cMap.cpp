@@ -8,7 +8,6 @@ cMap::cMap()
 	m_pObject_01 = g_pImageManager->FindImage("Object");
 	m_pImgMapBuffer = g_pImageManager->FindImage("MapBuffer");
 	m_pImgMiniBuffer = g_pImageManager->FindImage("MiniBuffer");
-
 }
 
 cMap::~cMap()
@@ -31,6 +30,7 @@ void cMap::Update()
 	if (g_pKeyManager->isStayKeyDown(VK_LBUTTON))
 		g_pPixelManager->RemoveBrush(m_pImgGround, g_ptMouse.x, g_ptMouse.y, 50);
 
+	// 오브젝트 정보 넘기는 박스
 	m_rtObject = RectMakeCenter(m_pObject_01->GetPosX() + m_pObject_01->GetFrameWidth() / 2 + m_fMapSourX,
 		m_pObject_01->GetPosY() + m_pObject_01->GetFrameHeight() / 2,
 		m_pObject_01->GetFrameWidth(),
@@ -44,13 +44,15 @@ void cMap::Render()
 	m_pObject_01->Render(m_pImgMapBuffer->GetMemDC(), m_pObject_01->GetPosX() + m_fMapSourX, m_pObject_01->GetPosY(), 74, 32);
 
 	// 미니 맵용 이미지 버퍼 //
-	m_pImgGround->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
+	//m_pImgBackground->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
 	//m_pImgGround->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
-
+	
 	// 백버퍼에 그린다.
 	m_pImgMapBuffer->Render(g_hDC, 0, 0);
+	//m_pImgMiniBuffer->Render(g_hDC, 0, 0);
 
-	RectangleMake(g_hDC, m_rtObject);
+	// 오브젝트 충돌 확인 용
+//	RectangleMake(g_hDC, m_rtObject);
 
 	string str("맵 X 좌표 : ");
 	char szStr[128];

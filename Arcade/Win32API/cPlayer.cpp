@@ -36,12 +36,14 @@ void cPlayer::Update()
 	Jump();
 	Diving();
 
+	// 플레이어 연동 충돌 박스
 	rtBody = RectMakeCenter(m_pPlayer->GetPosX(), m_pPlayer->GetPosY(), m_pPlayer->GetFrameWidth(), m_pPlayer->GetFrameHeight());
 
 	// 플레이어 이동 값
 	m_fPosX = m_pPlayer->GetPosX();
 	m_fPosY = m_pPlayer->GetPosY();
-
+	
+	// 맵 오브젝트 연동 충돌
 	RECT rt;
 	if (IntersectRect(&rt, &m_pMap->GetRTObject(), &rtBody))
 	{
@@ -57,14 +59,14 @@ void cPlayer::Update()
 }
 
 void cPlayer::MiniRender()
-{
-	HPEN hPen = (HPEN)CreatePen(0, 10, RGB(255, 0, 0));
-	HPEN hSelectPen = (HPEN)SelectObject(g_hDC, hPen);
-
-	EllipseMakeCenter(g_hDC,
+{	EllipseMakeCenter(g_hDC,
 		m_pPlayer->GetPosX(),
 		m_pPlayer->GetPosY(),
 		50, 50);
+	HPEN hPen = (HPEN)CreatePen(0, 10, RGB(255, 0, 0));
+	HPEN hSelectPen = (HPEN)SelectObject(g_hDC, hPen);
+
+
 
 	DeleteObject(hSelectPen);
 	DeleteObject(hPen);
@@ -78,7 +80,8 @@ void cPlayer::MiniRender()
 
 void cPlayer::Render()
 {
-	RectangleMake(g_hDC, rtBody.left, rtBody.top, m_pPlayer->GetFrameWidth(), m_pPlayer->GetFrameHeight());
+	// 캐릭터 충돌박스 확인 용
+//	RectangleMake(g_hDC, rtBody.left, rtBody.top, m_pPlayer->GetFrameWidth(), m_pPlayer->GetFrameHeight());
 
 	if (m_isIdle && !m_isJumpping)//아이들		
 	{
@@ -170,7 +173,7 @@ void cPlayer::PlayerCollision()
 		g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX2, probeY1))
 	{
 		// 기본 지형 충돌
-		m_pPlayer->SetPosY(m_pPlayer->GetPosY() + 10);	
+		m_pPlayer->SetPosY(m_pPlayer->GetPosY() + 15);	
 	}
 	else if (!g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX1, probeY1 - 5) &&
 			 !g_pPixelManager->CheckPixel(m_pImgMapBuffer, probeX2, probeY1 - 5))
@@ -186,6 +189,7 @@ void cPlayer::PlayerControl()
 		m_isIdle = false;
 		m_isRun = true;
 		m_isLeftMove = true;
+		m_isRightMove = false;
 
 		m_pPlayer->SetPosX(m_fPosX - m_fMoveSpeed);
 
@@ -207,6 +211,7 @@ void cPlayer::PlayerControl()
 		m_isIdle = false;
 		m_isRun = true;
 		m_isRightMove = true;
+		m_isLeftMove = false;
 
 		m_pPlayer->SetPosX(m_fPosX + m_fMoveSpeed);
 
