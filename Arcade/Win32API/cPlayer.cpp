@@ -67,6 +67,11 @@ void cPlayer::MiniRender()
 
 	DeleteObject(hSelectPen);
 	DeleteObject(hPen);
+
+	string str("캐릭터 Y 좌표 : ");
+	char szStr[128];
+	str += itoa(m_fPosY, szStr, 10);
+	TextOutA(g_hDC, 40, 575, str.c_str(), str.length());
 }
 
 void cPlayer::Render()
@@ -112,10 +117,6 @@ void cPlayer::Render()
 			6, 9);
 	}
 
-	string str("캐릭터 Y 좌표 : ");
-	char szStr[128];
-	str += itoa(m_fPosY, szStr, 10);
-	TextOutA(g_hDC, 40, 575, str.c_str(), str.length());
 }
 
 void cPlayer::PlayerCollision()

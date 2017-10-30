@@ -75,7 +75,7 @@ void cMainGame::LoadImageFromFile()
 
 	/* 미니맵 */
 	m_pImgMiniMap = g_pImageManager->AddImage("MiniMap", WINSIZEX, 128);
-	g_pImageManager->AddImage("MiniBuffer", WINSIZEX, 128)/*->SetTransColor(true, RGB(255, 0, 255))*/;
+	g_pImageManager->AddImage("MiniBuffer", WINSIZEX, 128)->SetTransColor(true, RGB(255, 0, 255));
 
 	/* 프로그레스바 */
 	g_pImageManager->AddImage("ProgressBack", "images/progressBarBack.bmp", 50, 10);
@@ -92,18 +92,19 @@ void cMainGame::LoadImageFromFile()
 
 void cMainGame::MiniMapRender()
 {
+	m_pPlayer->MiniRender();
+	m_pImgBackground->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
+	m_pImgMiniBuffer->Render(g_hDC, 0, 0);
 
-//	m_pImgBackground->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
+//	m_pImgMiniBuffer->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
 //	m_pImgMiniBuffer->Render(m_pImgBackBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
-	m_pImgGround->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
-
-
-	m_pImgMiniMap->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);	m_pPlayer->MiniRender();
+//	m_pImgGround->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
+//	m_pImgMiniMap->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
 }
 
 //void cMainGame::MiniMapRender()
 //{
 //	m_pPlayer->MiniRender();
-//	m_pImgBackground->Render(m_pImgMiniMap->GetMemDC(), 0, 0, WINSIZEX, 128);
-//	m_pImgMiniMap->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
+//	m_pImgGround->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
+//	m_pImgMiniBuffer->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
 //}
