@@ -26,6 +26,15 @@ private:
 	float	m_fJumpPower;		// 점프 파워
 	float	m_fGravity;			// 중력 (점프시 사용)
 
+	int		m_nRenSizeX;		// 프레임 렌더  X 사이즈 변경
+	int		m_nRenSizeY;		// 프레임 렌더  Y 사이즈 변경
+	int		m_nReGetPosX;		// 프레임 렌더 사이즈 변경 시 포지션 보정
+	int		m_nReGetPosY;		// 프레임 렌더 사이즈 변경 시 포지션 보정
+	int		m_nReCollisionX;	// 프레임 렌더 사이즈 변경 시 충돌 보정
+	int		m_nReCollisionY;	// 프레임 렌더 사이즈 변경 시 충돌 보정
+
+	int		m_nSizeDelay;
+
 	bool	m_isJumpping;		// 점프 중이냐?
 	bool	m_isDobleJumpping;	// 이중 점프 가능??
 	bool	m_isIdle;

@@ -9,15 +9,20 @@ private:
 	cImage*		m_pImgMiniBuffer;			// 미니맵 버퍼
 	cImage*		m_pImgMiniMap;
 	cImage*		m_pObject_01;				// 움직이는 오브젝트
+	cImage*		m_pItem;					// 플레이어 이미지 파일
+
 
 	RECT		m_rtObject;
+	RECT		m_rtItem;
 
 	float		m_fMapSourX;
 	float		m_fObjMOveSpeedX;
 
-	bool		m_bMoveRight;
+	bool		m_isMoveRight;
+	bool		m_isMoveUp;
+	bool		m_isItemGet;
 
-	void MoveObject();
+	void		MoveObject();
 public:
 	cMap();
 	~cMap();
@@ -27,12 +32,15 @@ public:
 	void Render();
 
 	RECT GetRTObject() { return m_rtObject; }
+	RECT GetRTItem() { return m_rtItem; }
 
 	float GetMapPosX() { return m_fMapSourX; }
 	void SetMapPosX(float setx) { m_fMapSourX = setx; }
 	float GetObj01PosX() { return m_pObject_01->GetPosX(); }
 	float GetObj01PosY() { return m_pObject_01->GetPosY(); }
-	bool GetObjMoveRight() { return m_bMoveRight; }
+	bool GetObjMoveRight() { return m_isMoveRight; }
 	float GetObjSpeed() { return m_fObjMOveSpeedX; }
+	bool GetItemGet() { return m_isItemGet; }
+	void SetItemGet(bool get) { m_isItemGet = get; }
 };
 

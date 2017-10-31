@@ -37,6 +37,9 @@ void cMainGame::Update()
 	{
 		m_pMap->Update();
 		m_pPlayer->Update();
+
+		if(m_pMap->GetItemGet() || !m_pMap->GetItemGet())
+		LoadImageFromFile();
 	}
 	else if (g_pKeyManager->isOnceKeyDown(VK_RETURN))
 	{
@@ -83,6 +86,7 @@ void cMainGame::LoadImageFromFile()
 
 	/* 지형물 오브젝트*/
 	g_pImageManager->AddImage("Object", "images/angrybirds-name-03.bmp", 74, 32, true, RGB(255, 255, 255));
+	g_pImageManager->AddImage("Item", "images/ch.bmp", 960, 960, 12, 12, 150, WINSIZEY / 2, true, RGB(255, 0, 255));
 
 	/* 플레이어 */
 	g_pImageManager->AddImage("Player", "images/ch.bmp", 960, 960, 12, 12, 150, WINSIZEY / 2, true, RGB(255, 0, 255));
@@ -107,3 +111,14 @@ void cMainGame::MiniMapRender()
 //	m_pImgGround->Render(m_pImgMiniBuffer->GetMemDC(), 0, 0, WINSIZEX, 128);
 //	m_pImgMiniBuffer->Render(m_pImgBackBuffer->GetMemDC(), 0, 0);
 //}
+
+/*
+if (m_pMap->GetItemGet() == false)
+{
+	g_pImageManager->AddImage("Player", "images/ch.bmp", 960, 960, 12, 12, 150, WINSIZEY / 2, true, RGB(255, 0, 255));
+}
+if (m_pMap->GetItemGet() == true)
+{
+	g_pImageManager->AddImage("Player*2", "images/ch.bmp", 960 * 2, 960 * 2, 12, 12, 150, WINSIZEY / 2, true, RGB(255, 0, 255));
+}
+*/
