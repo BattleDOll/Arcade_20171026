@@ -47,7 +47,13 @@ void cPlayer::Update()
 	// 플레이어 연동 충돌 박스
 	if (!m_pMap->GetItemGet())
 	{
-		rtBody = RectMakeCenter(m_pPlayer->GetPosX(), m_pPlayer->GetPosY(), m_pPlayer->GetFrameWidth(), m_pPlayer->GetFrameHeight());
+		rtBody = RectMakeCenter
+		(
+			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() /2, 
+			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
+			m_pPlayer->GetFrameWidth(), 
+			m_pPlayer->GetFrameHeight()
+		);
 	}
 	if (m_pMap->GetItemGet())
 	{
@@ -64,7 +70,7 @@ void cPlayer::Update()
 	{
 		if (!m_pMap->GetObjMoveRight())
 		{
-			m_pPlayer->SetPosX(m_pPlayer->GetPosX() - m_pMap->GetObjSpeed());
+ 			m_pPlayer->SetPosX(m_pPlayer->GetPosX() - m_pMap->GetObjSpeed());
 		}
 		if (m_pMap->GetObjMoveRight())
 		{
@@ -81,8 +87,10 @@ void cPlayer::Update()
 
 	if (m_pMap->GetItemGet() && m_pMap->GetItemGet())
 	{
+		// 캐릭터 스케일 
 		m_nRenSizeX = 2;
 		m_nRenSizeY = 2;
+		// 캐릭터 스케일에 따른 충돌 렉트 보정
 		m_nReGetPosX = 2;
 		m_nReGetPosY = 3;
 
@@ -95,6 +103,7 @@ void cPlayer::Update()
 		{
 			m_nRenSizeX = 1;
 			m_nRenSizeY = 1;
+
 			m_nReGetPosX = 1;
 			m_nReGetPosY = 1;
 
@@ -107,16 +116,16 @@ void cPlayer::Update()
 
 void cPlayer::MiniRender()
 {	
-	HPEN hPen = (HPEN)CreatePen(0, 10, RGB(255, 0, 0));
-	HPEN hSelectPen = (HPEN)SelectObject(g_hDC, hPen);
+	//HPEN hPen = (HPEN)CreatePen(0, 10, RGB(255, 0, 0));
+	//HPEN hSelectPen = (HPEN)SelectObject(g_hDC, hPen);
 
-		EllipseMakeCenter(g_hDC,
-			m_pPlayer->GetPosX(),
-			m_pPlayer->GetPosY(),
-			50, 50);
+	//	EllipseMakeCenter(g_hDC,
+	//		m_pPlayer->GetPosX(),
+	//		m_pPlayer->GetPosY(),
+	//		50, 50);
 
-	DeleteObject(hSelectPen);
-	DeleteObject(hPen);
+	//DeleteObject(hSelectPen);
+	//DeleteObject(hPen);
 
 	string str("캐릭터 X 좌표 : ");
 	char szStr[128];
@@ -131,14 +140,18 @@ void cPlayer::MiniRender()
 void cPlayer::Render()
 {
 	 // 캐릭터 충돌박스 확인 용
-	//if (!m_pMap->GetItemGet())
-	//{
-	//	RectangleMake(g_hDC, rtBody.left, rtBody.top, m_pPlayer->GetFrameWidth(), m_pPlayer->GetFrameHeight());
-	//}
-	//if (m_pMap->GetItemGet())
-	//{
-	//	RectangleMake(g_hDC, rtBody.left, rtBody.top, m_pPlayer->GetFrameWidth()*2, m_pPlayer->GetFrameHeight()*2);
-	//}
+	if (!m_pMap->GetItemGet())
+	{
+		BoudingLineMake(g_hDC, 
+			m_pPlayer->GetPosX() - m_pPlayer->GetFrameWidth() / 2,
+			m_pPlayer->GetPosY() - m_pPlayer->GetFrameHeight() / 2,
+			m_pPlayer->GetFrameWidth(),
+			m_pPlayer->GetFrameHeight());
+	}
+	if (m_pMap->GetItemGet())
+	{
+		RectangleMake(g_hDC, rtBody.left, rtBody.top, m_pPlayer->GetFrameWidth()*2, m_pPlayer->GetFrameHeight()*2);
+	}
 
 	if (m_isIdle && !m_isJumpping)//아이들		
 	{

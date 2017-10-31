@@ -20,8 +20,8 @@ void cMap::Setup()
 	m_pObject_01->SetPosX(240);
 	m_pObject_01->SetPosY(512);
 
-	m_pItem->SetPosX(100);		// 1055
-	m_pItem->SetPosY(500);		//270
+	m_pItem->SetPosX(1055);		// 1055
+	m_pItem->SetPosY(270);		//270
 
 	m_fMapSourX = 0;				// 맵 X 좌표
 	m_fObjMOveSpeedX = 1;			// 오브젝트 이동 속도
